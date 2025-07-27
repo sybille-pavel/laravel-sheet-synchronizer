@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import {clearRecords, createRecord, generateRecords} from "@/api/recordApi.js";
 import RecordModal from '@/Pages/Table/RecordModal.vue';
+import GoogleSheetControl from "@/Pages/Table/GoogleSheetControl.vue";
 
 const emit = defineEmits(['table-refresh']);
 
@@ -50,6 +51,8 @@ async function handleModalSubmit(data) {
             Очистить таблицу
         </button>
     </div>
+
+    <GoogleSheetControl />
 
     <RecordModal
         :visible="showModal"
