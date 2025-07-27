@@ -1,6 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Table from "@/Pages/Table/Table.vue";
+import TableActions from "@/Pages/Table/Actions.vue";
+import {ref} from "vue";
+
+const tableRef = ref(null);
+
+function refresh()
+{
+    tableRef.value.refresh();
+}
+
 </script>
 
 <template>
@@ -11,7 +22,7 @@ import { Head } from '@inertiajs/vue3';
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800"
             >
-                Dashboard
+                Список контента
             </h2>
         </template>
 
@@ -21,7 +32,8 @@ import { Head } from '@inertiajs/vue3';
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6 text-gray-900">
-                        You're logged in!
+                        <TableActions @table-refresh="refresh" />
+                        <Table ref="tableRef"></Table>
                     </div>
                 </div>
             </div>
