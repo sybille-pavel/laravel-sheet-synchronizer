@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import {fetchRecords, updateRecord} from "@/api/recordApi.js";
+import { onMounted, ref } from "vue";
+import {fetchRecords, deleteRecord, updateRecord} from "@/api/recordApi.js";
 import RecordModal from "@/Pages/Table/RecordModal.vue";
 
 const items = ref([]);
@@ -17,9 +17,8 @@ defineExpose({
 
 onMounted(loadRecords);
 
-
 function openEdit(record) {
-    selectedRecord.value = {...record};
+    selectedRecord.value = { ...record };
     showModal.value = true;
 }
 
@@ -28,7 +27,18 @@ async function handleModalSubmit(updatedData) {
     showModal.value = false;
     await loadRecords();
 }
+
+async function handleDelete(record) {
+    if (!confirm(`Удалить запись "${record.content}"?`)) return;
+    try {
+        await deleteRecord(record.id);
+        await loadRecords();
+    } catch (e) {
+        console.error("Ошибка удаления", e);
+    }
+}
 </script>
+
 
 <template>
     <div class="overflow-x-auto">
@@ -39,16 +49,18 @@ async function handleModalSubmit(updatedData) {
                 <th class="text-left px-4 py-2 border-b">Статус</th>
                 <th class="text-left px-4 py-2 border-b">Дата создания</th>
                 <th class="text-left px-4 py-2 border-b">Дата обновления</th>
+                <th class="text-left px-4 py-2 border-b">Действия</th>
             </tr>
             </thead>
             <tbody>
             <tr
                 v-for="(item, index) in items"
                 :key="index"
-                class="hover:bg-gray-50 cursor-pointer"
-                @click="openEdit(item)"
+                class="hover:bg-gray-50"
             >
-                <td class="px-4 py-2 border-b">{{ item.content }}</td>
+                <td class="px-4 py-2 border-b cursor-pointer" @click="openEdit(item)">
+                    {{ item.content }}
+                </td>
                 <td class="px-4 py-2 border-b">
             <span
                 :class="[
@@ -63,6 +75,14 @@ async function handleModalSubmit(updatedData) {
                 </td>
                 <td class="px-4 py-2 border-b">{{ item.created_at }}</td>
                 <td class="px-4 py-2 border-b">{{ item.updated_at }}</td>
+                <td class="px-4 py-2 border-b">
+                    <button
+                        @click="handleDelete(item)"
+                        class="text-sm text-red-600 hover:underline"
+                    >
+                        Удалить
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -76,6 +96,7 @@ async function handleModalSubmit(updatedData) {
         @submit="handleModalSubmit"
     />
 </template>
+
 
 <style scoped>
 </style>

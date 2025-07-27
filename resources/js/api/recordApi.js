@@ -49,3 +49,12 @@ export async function updateRecord(id, data) {
         throw error;
     }
 }
+
+export async function deleteRecord(id) {
+    try{
+        return await axios.delete(`/records/${id}`);
+    }catch (error){
+        console.error('Ошибка при удалении записи:', error);
+        throw error;
+    }
+}
