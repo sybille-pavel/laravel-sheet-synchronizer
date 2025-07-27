@@ -39,3 +39,13 @@ export async function createRecord(data) {
         throw error;
     }
 }
+
+export async function updateRecord(id, data) {
+    try {
+        const response = await axios.put(`/records/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при создании записи:', error);
+        throw error;
+    }
+}
