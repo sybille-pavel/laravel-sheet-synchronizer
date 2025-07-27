@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+    use App\Http\Controllers\GoogleSheetController;
+    use App\Http\Controllers\ProfileController;
     use App\Http\Controllers\RecordController;
     use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -32,5 +33,7 @@ Route::delete('/records/{record}', [RecordController::class, 'destroy']);
 
 Route::post('/records/generate', [RecordController::class, 'generate']);
 Route::post('/records/clear', [RecordController::class, 'truncate']);
+
+Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
 
 require __DIR__.'/auth.php';
