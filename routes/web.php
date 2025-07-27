@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+    use App\Http\Controllers\RecordController;
+    use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,5 +24,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/records', [RecordController::class, 'index']);
+Route::post('/records', [RecordController::class, 'store']);
+Route::put('/records/{record}', [RecordController::class, 'update']);
+Route::delete('/records/{record}', [RecordController::class, 'destroy']);
+
+Route::post('/records/generate', [RecordController::class, 'generate']);
+Route::post('/records/clear', [RecordController::class, 'truncate']);
 
 require __DIR__.'/auth.php';
