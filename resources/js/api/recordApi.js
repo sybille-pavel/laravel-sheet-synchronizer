@@ -25,7 +25,17 @@ export async function generateRecords() {
         const response = await axios.post('/records/generate');
         return response.data;
     } catch (error) {
-        console.error('Ошибка при получении записей:', error);
+        console.error('Ошибка при генерации записей:', error);
+        throw error;
+    }
+}
+
+export async function createRecord(data) {
+    try {
+        const response = await axios.post('/records', data);
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при создании записи:', error);
         throw error;
     }
 }
