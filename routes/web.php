@@ -34,6 +34,7 @@ Route::delete('/records/{record}', [RecordController::class, 'destroy']);
 Route::post('/records/generate', [RecordController::class, 'generate']);
 Route::post('/records/clear', [RecordController::class, 'truncate']);
 
+Route::get('/google-sheets-config', [GoogleSheetController::class, 'index']);
 Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
 
 require __DIR__.'/auth.php';

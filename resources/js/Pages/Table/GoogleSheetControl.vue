@@ -1,25 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-
-const emit = defineEmits(['saved']);
+import {fetchConfig, updateConfig} from "@/api/googleSheet.js";
 
 const googleSheetUrl = ref('');
 
-// TODO: заменить на реальный fetch с сервера
-onMounted(() => {
-    // Пример: подгружаем ранее сохранённое значение (заглушка)
-    const saved = localStorage.getItem('googleSheetUrl');
-    if (saved) {
-        googleSheetUrl.value = saved;
-    }
+
+onMounted(async () => {
+    const config = await fetchConfig();
+    googleSheetUrl.value = config.sheet_url;
 });
 
-function saveUrl() {
-    // Заглушка — сохранить в localStorage (замени на API)
-    localStorage.setItem('googleSheetUrl', googleSheetUrl.value);
-    console.log('Сохранено:', googleSheetUrl.value);
-
-    emit('saved', googleSheetUrl.value);
+async function saveUrl() {
+    try{
+        await updateConfig(googleSheetUrl.value);
+        alert("Успешно!");
+    }catch (error){
+        alert(error.response.data.message);
+    }
 }
 </script>
 
