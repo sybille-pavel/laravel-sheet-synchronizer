@@ -25,29 +25,30 @@
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+        Route::get('/fetch/{count?}', function (?int $count = null) {
+            $params = ['--plain' => true];
+            if ($count !== null) {
+                $params['count'] = $count;
+            }
+
+            Artisan::call('sheet:fetch', $params);
+            $output = Artisan::output();
+
+            return response("<pre>".e($output)."</pre>");
+        });
+
+        Route::get('/records', [RecordController::class, 'index']);
+        Route::post('/records', [RecordController::class, 'store']);
+        Route::put('/records/{record}', [RecordController::class, 'update']);
+        Route::delete('/records/{record}', [RecordController::class, 'destroy']);
+
+        Route::post('/records/generate', [RecordController::class, 'generate']);
+        Route::post('/records/clear', [RecordController::class, 'truncate']);
+
+        Route::get('/google-sheets-config', [GoogleSheetController::class, 'index']);
+        Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
     });
 
-    Route::get('/fetch/{count?}', function (?int $count = null) {
-        $params = ['--plain' => true];
-        if ($count !== null) {
-            $params['count'] = $count;
-        }
-
-        Artisan::call('sheet:fetch', $params);
-        $output = Artisan::output();
-
-        return response("<pre>".e($output)."</pre>");
-    });
-
-    Route::get('/records', [RecordController::class, 'index']);
-    Route::post('/records', [RecordController::class, 'store']);
-    Route::put('/records/{record}', [RecordController::class, 'update']);
-    Route::delete('/records/{record}', [RecordController::class, 'destroy']);
-
-    Route::post('/records/generate', [RecordController::class, 'generate']);
-    Route::post('/records/clear', [RecordController::class, 'truncate']);
-
-    Route::get('/google-sheets-config', [GoogleSheetController::class, 'index']);
-    Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
 
     require __DIR__.'/auth.php';
