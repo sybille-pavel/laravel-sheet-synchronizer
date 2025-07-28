@@ -4,37 +4,50 @@
     use App\Http\Controllers\ProfileController;
     use App\Http\Controllers\RecordController;
     use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+    use Illuminate\Support\Facades\Artisan;
+    use Illuminate\Support\Facades\Route;
+    use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+    Route::get('/', function () {
+        return Inertia::render('Welcome', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+        ]);
+    });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    Route::middleware('auth')->group(function () {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
-Route::get('/records', [RecordController::class, 'index']);
-Route::post('/records', [RecordController::class, 'store']);
-Route::put('/records/{record}', [RecordController::class, 'update']);
-Route::delete('/records/{record}', [RecordController::class, 'destroy']);
+    Route::get('/fetch/{count?}', function (?int $count = null) {
+        $params = ['--plain' => true];
+        if ($count !== null) {
+            $params['count'] = $count;
+        }
 
-Route::post('/records/generate', [RecordController::class, 'generate']);
-Route::post('/records/clear', [RecordController::class, 'truncate']);
+        Artisan::call('sheet:fetch', $params);
+        $output = Artisan::output();
 
-Route::get('/google-sheets-config', [GoogleSheetController::class, 'index']);
-Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
+        return response("<pre>".e($output)."</pre>");
+    });
 
-require __DIR__.'/auth.php';
+    Route::get('/records', [RecordController::class, 'index']);
+    Route::post('/records', [RecordController::class, 'store']);
+    Route::put('/records/{record}', [RecordController::class, 'update']);
+    Route::delete('/records/{record}', [RecordController::class, 'destroy']);
+
+    Route::post('/records/generate', [RecordController::class, 'generate']);
+    Route::post('/records/clear', [RecordController::class, 'truncate']);
+
+    Route::get('/google-sheets-config', [GoogleSheetController::class, 'index']);
+    Route::post('/google-sheets-config', [GoogleSheetController::class, 'store']);
+
+    require __DIR__.'/auth.php';
